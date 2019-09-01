@@ -1,0 +1,92 @@
+'''
+
+Here i have applied all the classifiers together so as to understand the basic concepts 
+it is very convinient to use once you know how to deal with these classifiers according to the scenario
+
+'''
+
+import pandas as pd
+data = pd.read_csv('.\BC_data.csv')
+
+data.columns
+
+# x and y values
+x = data.iloc[:, 2:32].values
+y = data.iloc[:, 1].values
+
+data.head()
+
+# preprocessing
+
+from sklearn.preprocessing import LabelEncoder
+lx = LabelEncoder()
+y=lx.fit_transform(y)
+
+# splitting
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.25, random_state = 0)
+
+# Feature Scaling
+
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
+
+# Model Selection
+
+# ===================================logistic regression ================================
+
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+lr.fit(x_train,y_train)
+y_pred = lr.predict(x_test)
+
+from sklearn.metrics import accuracy_score
+lr_score = accuracy_score(y_test,y_pred)
+
+# =================================== KNeighborsClassifier ================================
+
+from sklearn.neighbors import KNeighborsClassifier
+kn = KNeighborsClassifier(n_neighbors = 5 , metric= 'minkowski', p = 2 )
+kn.fit(x_train,y_train)
+y_pred = kn.predict(x_test)
+kn_score = accuracy_score(y_test,y_pred)
+
+# ================================== Naive Bayes ========================================
+
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+gnb.fit(x_train,y_train)
+y_pred = gnb.predict(x_test)
+gnb_score = accuracy_score(y_pred,y_test)
+
+# ================================== Decision tree =====================================
+
+from sklearn.tree import DecisionTreeClassifier
+dt = DecisionTreeClassifier(criterion = "entropy" )
+dt.fit(x_train,y_train)
+y_pred = dt.predict(x_test)
+dt_score = accuracy_score(y_test , y_pred)   # score = 90.9 
+
+# ================================== RandomForest =====================================
+from sklearn.ensemble import RandomForestClassifier
+rf = RandomForestClassifier(n_estimators=10 , criterion='entropy')
+rf.fit(x_train,y_train)
+y_pred = rf.predict(x_test)
+rf_score = accuracy_score(y_pred,y_test)    # score = 95.1
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_pred,y_test)
+
+# Using SVC method of svm class to use Kernel SVM Algorithm
+from sklearn.svm import SVC
+sv = SVC(C=2 ,kernel = 'linear', gamma =0.15)
+sv.fit(x_train, y_train)
+y_pred = sv.predict(x_test)
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_pred,y_test)
+
+sv_score = accuracy_score(y_pred,y_test)
